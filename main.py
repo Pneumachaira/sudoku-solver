@@ -305,6 +305,8 @@ def guess():
                 checkRow(i)
                 checkBlock(i)
                 checkSole(i)
+            if '' not in sudokuPuzzle: #This part checks to see if the puzzle is complete
+                break
             
             for i in range(0, 81, 9): #Progress report
                 printSudoku(i)
@@ -314,7 +316,9 @@ def guess():
 
             for i in range(0, 9): #Unique Candidate search
                 checkColUnique(i)
-
+            if '' not in sudokuPuzzle: #This part checks to see if the puzzle is complete
+                break
+            
             for i in range(0, 81, 9): #Progress report
                 printSudoku(i)
 
@@ -323,7 +327,9 @@ def guess():
 
             for i in range(0, 9):
                 checkRowUnique(i)
-
+            if '' not in sudokuPuzzle: #This part checks to see if the puzzle is complete
+                break
+            
             for i in range(0, 81, 9): #Progress report
                 printSudoku(i)
 
@@ -332,22 +338,17 @@ def guess():
         
             for i in range(0, 3):
                 checkBlockUnique(i)
-
+            if '' not in sudokuPuzzle: #This part checks to see if the puzzle is complete
+                break
+            
             for i in range(0, 81, 9): #Progress report
                 printSudoku(i)
-
-            complete = 1
-            for i in range(0, 81): #This part checks to see if the puzzle is complete
-                if (sudokuPuzzle[i] == ''):
-                    complete = 0
-            if (complete == 1):
-                break
 
             if sudokuOld == sudokuPuzzle:
                 print('Hrm.')
                 print('Let\'s go back and try a different number!')
                 break
-        if complete == 1:
+        if '' not in sudokuPuzzle: #Gotta break out of the 1-10 guessing
             break
 
 #MAIN FUNCTION
@@ -366,14 +367,14 @@ sudokuOld = list()
 sudokuBackup = list()
 print('Please enter the values of the Sudoku puzzle one by one, row by row.')
 print('For blank spots, hit "Enter" without entering a value.')
-while len(sudokuPuzzle) != 81:
-    sudokuPuzzle.append(input())
+#while len(sudokuPuzzle) != 81:
+ #   sudokuPuzzle.append(input())
 
 #Below are pre-set Sudoku puzzles
 #Easy:
 #sudokuPuzzle = ['5', '', '', '', '', '', '', '', '8', '', '', '', '8', '2', '', '3', '', '', '6', '8', '2', '5', '', '', '', '', '', '', '1', '', '', '', '', '', '9', '', '', '', '', '4', '3', '8', '6', '', '1', '', '6', '5', '7', '', '', '8', '', '2', '7', '9', '', '2', '', '6', '', '', '4', '', '', '3', '1', '', '7', '', '', '', '8', '', '', '', '', '', '', '', '']
 #Very Hard (mostly complete, was for guess() testing):
-#sudokuPuzzle = ['', '', '', '2', '4', '6', '1', '5', '7', '2', '7', '5', '8', '1', '3', '6', '9', '4', '4', '6', '1', '9', '7', '5', '2', '8', '3', '', '', '', '4', '', '', '8', '', '', '', '', '4', '6', '', '8', '7', '', '', '', '', '8', '3', '5', '', '4', '', '', '1', '9', '2', '5', '6', '4', '3', '7', '8', '', '', '6', '7', '3', '2', '9', '4', '1', '3', '4', '7', '1', '8', '9', '5', '6', '2']
+sudokuPuzzle = ['', '', '', '2', '4', '6', '1', '5', '7', '2', '7', '5', '8', '1', '3', '6', '9', '4', '4', '6', '1', '9', '7', '5', '2', '8', '3', '', '', '', '4', '', '', '8', '', '', '', '', '4', '6', '', '8', '7', '', '', '', '', '8', '3', '5', '', '4', '', '', '1', '9', '2', '5', '6', '4', '3', '7', '8', '', '', '6', '7', '3', '2', '9', '4', '1', '3', '4', '7', '1', '8', '9', '5', '6', '2']
 
 for i in range(0, 81, 9):
     printSudoku(i)
@@ -394,6 +395,8 @@ while True:
         checkRow(i)
         checkBlock(i)
         checkSole(i)
+    if '' not in sudokuPuzzle: #This part checks to see if the puzzle is complete
+        break
         
     for i in range(0, 81, 9): #Progress report
         printSudoku(i)
@@ -403,6 +406,8 @@ while True:
 
     for i in range(0, 9): #Unique Candidate search
         checkColUnique(i)
+    if '' not in sudokuPuzzle: #This part checks to see if the puzzle is complete
+        break
 
     for i in range(0, 81, 9): #Progress report
         printSudoku(i)
@@ -412,6 +417,8 @@ while True:
 
     for i in range(0, 9):
         checkRowUnique(i)
+    if '' not in sudokuPuzzle: #This part checks to see if the puzzle is complete
+        break
 
     for i in range(0, 81, 9): #Progress report
         printSudoku(i)
@@ -421,6 +428,8 @@ while True:
         
     for i in range(0, 3):
         checkBlockUnique(i)
+    if '' not in sudokuPuzzle: #This part checks to see if the puzzle is complete
+        break
 
     for i in range(0, 81, 9): #Progress report
         printSudoku(i)
@@ -432,12 +441,9 @@ while True:
         print('Time to start guessing!')
         guess()
 
-    complete = 1
-    for i in range(0, 81): #This part checks to see if the puzzle is complete
-        if (sudokuPuzzle[i] == ''):
-            complete = 0
-    if (complete == 1):
-        print('Success!!!!!!')
-        for z in range(0, 81, 9):
-            printSudoku(z)
+    if '' not in sudokuPuzzle: #This part checks to see if the puzzle is complete
         break
+
+print('Success!!!!!!')
+for z in range(0, 81, 9):
+    printSudoku(z)
