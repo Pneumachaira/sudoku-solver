@@ -12,19 +12,16 @@ listGuess = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 #This function prints out the Sudoku format to make sure user input was correct
 #It also will print out the completed Sudoku at the end!
-def printSudoku(i):
-    if bool(sudokuPuzzle[i]) == 1: #If that index isn't empty
-        print(sudokuPuzzle[i], end='') #print it out with no line break
-    else:
-        print(' ', end='')
-    for x in range (1, 9):
-        if bool(sudokuPuzzle[i+x]) == 1:
-            print(sudokuPuzzle[i+x], end='')
-        else:
-            print(' ', end='')
-        if (i + x + 1) % 3 == 0 and (i + x + 1) % 9 != 0:
-            print('|', end='')
-    print('')
+def printSudoku():
+    for row in range (0, 9):
+        for x in range (0, 9): #Where x goes down the row
+            if bool(sudokuPuzzle[row * 9 + x]) == 1:
+                print(sudokuPuzzle[row * 9 + x], end='')
+            else:
+                print(' ', end = '')
+            if (x == 2 or x == 5):
+                print('|', end = '')
+        print('')
 
 
 #This function checks which 3x3 block column the cell is in
@@ -96,7 +93,7 @@ def checkColUnique(col): #Where col is the column we're checking, 0-8
     for num in range (1, 10): #Where num is the number of the candidate
         #First off, is the num candidate already in the column?
         alreadyHere = False
-        for y in range(0, 9): #Here we check all values in the column
+        for y in range (0, 9): #Here we check all values in the column
             if sudokuPuzzle[col + y * 9] == str(num): #If we already have our num in the column...
                 alreadyHere = True #There's no space for it!
                 break #Break out of the for y loop...
@@ -106,7 +103,7 @@ def checkColUnique(col): #Where col is the column we're checking, 0-8
         for each in range (0, 9):
             listUnique[each] = 1 #Resets listUnique for each num
         #Now we look at each cell in the column to see if it's occupied
-        for row in range(0, 9):
+        for row in range (0, 9):
             #If occupied, we can't put another number there, so we change that index of listUnique to 0
             if sudokuPuzzle[(row * 9) + col] != '': #This spot already occupied
                 listUnique[row] = 0
@@ -129,117 +126,120 @@ def checkColUnique(col): #Where col is the column we're checking, 0-8
                         break #Break out of the for x loop
                 if (alreadyHere): #If we find the num candidate within the 3x3 block, we can move onto the next block
                     break #Break out of the for y loop
-        sumUnique = 0
+        sumUnique = 0 #How many potential spots could the num candidate be in?
         for each in range (0, 9):
             sumUnique += listUnique[each]
-        if (sumUnique == 1):
-            sudokuPuzzle[(listUnique.index(1) * 9) + col] = str(num)
-
-#####################################################################
-# UPDATE THE COMMENTS AND VARIABLE NAMES ON checkRowUnique
-#####################################################################
+        if (sumUnique == 1): #If there's only one potential spot, we've found it!
+            sudokuPuzzle[(listUnique.index(1) * 9) + col] = str(num) #Put 'er there, pal
 
 #This function checks for Unique Candidates in a row
 #That is, does a number have only one possible place within the row for it to reside?
 def checkRowUnique(row): #Where row is the row we're checking, 0-8
     #So! For each number, 1-9, we go through the row
-    for num in range(1, 10): #Where num is the number of the candidate
-        for z in range (0, 9):
-            listUnique[z] = 1 #Resets listUnique
-        for col in range(0, 9): #Where col is the column in question
-            openSpot = 1
-            for x in range(0, 9): #Here we check all values in the row
-                if sudokuPuzzle[i * 9 + x] == str(num):
-                    openSpot = 0
-                    break
-            if (openSpot == 0):
-                continue #If one of the numbers in the row is num, we move to next m
-            if sudokuPuzzle[(i * 9) + col] != '':
+    for num in range(1, 10): #Where num is the number of the candidate, 1-9
+        #First, is the num candidate already in the row?
+        alreadyHere = False
+        for x in range (0, 9): #Here we check all values in the row
+            if sudokuPuzzle[row * 9 + x] == str(num): #If the number already exists in the row
+                alreadyHere = True
+                break #Break out of the for x loop...
+        if (alreadyHere):
+            continue #Onto the next number!
+        #Now that we know the num candidate isn't already in the row, let's do the rest of it!
+        for each in range (0, 9):
+            listUnique[each] = 1 #Resets listUnique for each num
+        #Now we look at each cell in the row to see if it's occupied
+        for col in range (0, 9):
+            #If occupied, we can't put a number there
+            if sudokuPuzzle[(row * 9) + col] != '':
                 listUnique[col] = 0
-            #Check the columns!
-            for y in range(0, 9): #Where y is the vertical position in the column
-                if (sudokuPuzzle[col + y * 9] == str(num)):
-                    listUnique[col] = 0 #Candidate cannot fit in this cell
-            #Check the blocks!
-            for y in range(0, 3): #Where y is the vertical position in the block
-                if sudokuPuzzle[(i // 3 * 27) + (col // 3 * 3) + (y * 9)] == str(num):
-                    listUnique[col] = 0 #The candidate cannot fit here
-                if sudokuPuzzle[(i // 3 * 27) + (col // 3 * 3) + (y * 9)+1] == str(num):
-                    listUnique[col] = 0 #Or here
-                if sudokuPuzzle[(i // 3 * 27) + (col // 3 * 3) + (y * 9)+2] == str(num):
-                    listUnique[col] = 0 #Or here
-        sumUnique = 0
-        for z in range(0, 9): #Where z just goes through the list
-            sumUnique = sumUnique + listUnique[z]
-        if (sumUnique == 1 and openSpot == 1):
-            sudokuPuzzle[listUnique.index(1) + i * 9] = str(num)
-        for z in range (0, 9):
-            listUnique[z] = 1 #Reset the list
-
-#####################################################################
-# UPDATE THE COMMENTS AND VARIABLE NAMES ON checkBlockUnique
-#####################################################################
+                continue #No need to check the other constraints for this cell; it's already taken
+            #Check the column each cell is in to see if the num candidate is present
+            for y in range (0, 9): #Start from the top and move down
+                if (sudokuPuzzle[col + y * 9] == str(num)): #If the num candidate is present in that column...
+                    listUnique[col] = 0 #It can't fit in that cell
+                    break #Break out of the for y loop; onto the next column
+        #Check the blocks!
+        for horizBlock in range (0, 3): #Where horizBlock is the horizontal position 0-2 of the 3x3 blocks
+            alreadyHere = False #The num candidate hasn't been found in this block... yet...
+            for y in range (0, 3): #Where y is the vertical value within the 3x3 block
+                #If we find the num candidate in a block we get rid of three possible locations
+                for x in range (0, 3): #Where x is the horizontal value within the 3x3 block
+                    if (sudokuPuzzle[(horizBlock * 3) + (row // 3 * 27) + (y * 9) + x] == str(num)): #Starts at the top-left of a 3x3 block
+                        for index in range (horizBlock * 3, horizBlock * 3 + 3):
+                            listUnique[index] = 0
+                        alreadyHere = True
+                        break #Break out of the for x loop
+                    if (alreadyHere):
+                        break #Break out of the for y loop
+        sumUnique = 0 #How many potential spots could the num candidate be in?
+        for each in range (0, 9):
+            sumUnique += listUnique[each]
+        if (sumUnique == 1): #If there's only one potential spot, we've found it!
+            sudokuPuzzle[(row * 9) + listUnique.index(1)] = str(num) #Put 'er there, pal
 
 #This function checks for Unique Candidates in a block
-def checkBlockUnique(i): #Where i is the horizontal value of blocks we're checking, 0-2
-    for j in range(0, 3): #Where j is the vertical value of block we're checking
-        for k in range(1, 10): #Where k is the number of the candidate
-            openSpot = 1
-            for z in range (0, 9):
-                listUnique[z] = 1 #Reset the list
-            for m in range(0, 3): #This part knocks out already-populated cells
-                if sudokuPuzzle[(j * 27) + (i * 3) + (m * 9)] != '':
-                    listUnique[m * 3] = 0
-                if sudokuPuzzle[(j * 27) + (i * 3) + (m * 9) + 1] != '':
-                    listUnique[m * 3 + 1] = 0
-                if sudokuPuzzle[(j * 27) + (i * 3) + (m * 9) + 2] != '':
-                    listUnique[m * 3 + 2] = 0
-            for m in range(0, 3): #Where m is the row of the cell in the block
-                if sudokuPuzzle[(j * 27) + (i * 3) + (m * 9)] == str(k):
-                    openSpot = 0
-                    break
-                if sudokuPuzzle[(j * 27) + (i * 3) + (m * 9) + 1] == str(k):
-                    openSpot = 0
-                    break
-                if sudokuPuzzle[(j * 27) + (i * 3) + (m * 9) + 2] == str(k):
-                    openSpot = 0
-                    break
-            if (openSpot == 0):
-                continue
-            #Check the columns!
-            for y in range (0, 9): #Where y is the vertical value of the column
-                if sudokuPuzzle[(i * 3) + (y * 9)] == str(k):
-                    listUnique[0] = 0
-                    listUnique[3] = 0
-                    listUnique[6] = 0
-                if sudokuPuzzle[(i * 3) + (y * 9) + 1] == str(k):
-                    listUnique[1] = 0
-                    listUnique[4] = 0
-                    listUnique[7] = 0
-                if sudokuPuzzle[(i * 3) + (y * 9) + 2] == str(k):
-                    listUnique[2] = 0
-                    listUnique[5] = 0
-                    listUnique[8] = 0
-            for x in range (0, 9): #Where x is the horizontal value of the row
-                if sudokuPuzzle[(j * 27) + x] == str(k):
-                    listUnique[0] = 0
-                    listUnique[1] = 0
-                    listUnique[2] = 0
-                if sudokuPuzzle[(j * 27) + x + 9] == str(k):
-                    listUnique[3] = 0
-                    listUnique[4] = 0
-                    listUnique[5] = 0
-                if sudokuPuzzle[(j * 27) + x + 18] == str(k):
-                    listUnique[6] = 0
-                    listUnique[7] = 0
-                    listUnique[8] = 0
-            sumUnique = 0
-            for z in range(0, 9): #Where z just goes through the list
-                sumUnique = sumUnique + listUnique[z]
-            if (sumUnique == 1 and openSpot == 1): #If only one spot can be found for m
-                sudokuPuzzle[(j * 27) + (i * 3) + (9 * (listUnique.index(1) // 3)) + (listUnique.index(1) % 3)] = str(k)
-            for z in range (0, 9):
-                listUnique[z] = 1 #Reset the list
+def checkBlockUnique():
+    for horizBlock in range (0, 3): #Where horizBlock is the horizontal value of blocks we're checking, 0-2
+        for vertBlock in range(0, 3): #Where vertBlock is the vertical value of the block we're checking, 0-2
+            for num in range(1, 10): #Where num is the number of the candidate
+                alreadyHere = False
+                #First, check if the num candidate is in the 3x3 block already
+                for y in range(0, 3): #Where y is the vertical value of the row in the 3x3 block
+                    if sudokuPuzzle[(vertBlock * 27) + (horizBlock * 3) + (y * 9)] == str(num): #If the num candidate is present...
+                        alreadyHere = True
+                        break #We can break out of the for y loop
+                    if sudokuPuzzle[(vertBlock * 27) + (horizBlock * 3) + (y * 9) + 1] == str(num):
+                        alreadyHere = True
+                        break
+                    if sudokuPuzzle[(vertBlock * 27) + (horizBlock * 3) + (y * 9) + 2] == str(num):
+                        alreadyHere = True
+                        break
+                if (alreadyHere): #If the num candidate's already here...
+                    continue #We can move on to the next num candidate
+                #Otherwise we'll continue looking for a unique possible location
+                for each in range (0, 9):
+                    listUnique[each] = 1 #Resets listUnique
+                for y in range (0, 3): #Where y is the vertical value of the row in the 3x3 block
+                    #This part looks at each row in the 3x3 blocks and knocks out already-populated cells
+                    if sudokuPuzzle[(vertBlock * 27) + (horizBlock * 3) + (y * 9)] != '':
+                        listUnique[y * 3] = 0
+                    if sudokuPuzzle[(vertBlock * 27) + (horizBlock * 3) + (y * 9) + 1] != '':
+                        listUnique[y * 3 + 1] = 0
+                    if sudokuPuzzle[(vertBlock * 27) + (horizBlock * 3) + (y * 9) + 2] != '':
+                        listUnique[y * 3 + 2] = 0
+                #Check the columns!
+                for y in range (0, 9): #Where y is the vertical value of the column
+                    if sudokuPuzzle[(horizBlock * 3) + (y * 9)] == str(num):
+                        listUnique[0] = 0
+                        listUnique[3] = 0
+                        listUnique[6] = 0
+                    if sudokuPuzzle[(horizBlock * 3) + (y * 9) + 1] == str(num):
+                        listUnique[1] = 0
+                        listUnique[4] = 0
+                        listUnique[7] = 0
+                    if sudokuPuzzle[(horizBlock * 3) + (y * 9) + 2] == str(num):
+                        listUnique[2] = 0
+                        listUnique[5] = 0
+                        listUnique[8] = 0
+                for x in range (0, 9): #Where x is the horizontal value of the row
+                    if sudokuPuzzle[(vertBlock * 27) + x] == str(num):
+                        listUnique[0] = 0
+                        listUnique[1] = 0
+                        listUnique[2] = 0
+                    if sudokuPuzzle[(vertBlock * 27) + x + 9] == str(num):
+                        listUnique[3] = 0
+                        listUnique[4] = 0
+                        listUnique[5] = 0
+                    if sudokuPuzzle[(vertBlock * 27) + x + 18] == str(num):
+                        listUnique[6] = 0
+                        listUnique[7] = 0
+                        listUnique[8] = 0
+                sumUnique = 0
+                for each in range(0, 9): #Where each just goes through the list
+                    sumUnique = sumUnique + listUnique[each]
+                if (sumUnique == 1): #If only one spot can be found for m
+                    sudokuPuzzle[(vertBlock * 27) + (horizBlock * 3) + (9 * (listUnique.index(1) // 3)) + (listUnique.index(1) % 3)] = str(num)
 
 
 # /////////////////////////////////////////////////////////////////
@@ -256,7 +256,14 @@ def checkBlockUnique(i): #Where i is the horizontal value of blocks we're checki
 def guess():
     #First we make a copy of the puzzle thus far
     sudokuBackup = sudokuPuzzle.copy()
-    #This part sees which block is most open
+    #Then we find the first empty spot
+    cell = 0
+    while (sudokuBackup[cell] != ''):
+        cell += 1
+def guess2():
+    #First we make a copy of the puzzle thus far
+    sudokuBackup = sudokuPuzzle.copy()
+    #Then we find the most influential spot
     guessFinal = 0
     for i in range(0, 3): #Horizontal value of 3x3 block
         for j in range(0, 3): #Vertical value of 3x3 block
@@ -395,11 +402,10 @@ print('For blank spots, hit "Enter" without entering a value.')
 #Below are pre-set Sudoku puzzles
 #Easy:
 sudokuPuzzle = ['5', '', '', '', '', '', '', '', '8', '', '', '', '8', '2', '', '3', '', '', '6', '8', '2', '5', '', '', '', '', '', '', '1', '', '', '', '', '', '9', '', '', '', '', '4', '3', '8', '6', '', '1', '', '6', '5', '7', '', '', '8', '', '2', '7', '9', '', '2', '', '6', '', '', '4', '', '', '3', '1', '', '7', '', '', '', '8', '', '', '', '', '', '', '', '']
-#Very Hard (mostly complete, was for guess() testing):
+#Very Hard (mostly complete, is for guess() testing):
 # sudokuPuzzle = ['', '', '', '2', '4', '6', '1', '5', '7', '2', '7', '5', '8', '1', '3', '6', '9', '4', '4', '6', '1', '9', '7', '5', '2', '8', '3', '', '', '', '4', '', '', '8', '', '', '', '', '4', '6', '', '8', '7', '', '', '', '', '8', '3', '5', '', '4', '', '', '1', '9', '2', '5', '6', '4', '3', '7', '8', '', '', '6', '7', '3', '2', '9', '4', '1', '3', '4', '7', '1', '8', '9', '5', '6', '2']
 
-for i in range(0, 81, 9): #Because the printSudoku() function prints one line at a time, we step by 9
-    printSudoku(i)
+printSudoku()
 print('Is this correct? If not, restart the program. Otherwise, hit Enter to start.')
 input()
 
@@ -413,8 +419,7 @@ while True: #Main loop starts here
     if '' not in sudokuPuzzle: #This part checks to see if the puzzle is complete
         break
         
-    for i in range(0, 81, 9): #Progress report
-        printSudoku(i)
+    printSudoku() #Progress report
 
     input()
     print('checkColUnique')
@@ -423,8 +428,7 @@ while True: #Main loop starts here
     if '' not in sudokuPuzzle: #This part checks to see if the puzzle is complete
         break
 
-    for i in range(0, 81, 9): #Progress report
-        printSudoku(i)
+    printSudoku() #Progress report
 
     input()
     print('checkRowUnique')
@@ -433,19 +437,16 @@ while True: #Main loop starts here
     if '' not in sudokuPuzzle: #This part checks to see if the puzzle is complete
         break
 
-    for i in range(0, 81, 9): #Progress report
-        printSudoku(i)
+    printSudoku() #Progress report
 
     input()
     print('checkBlockUnique')
         
-    for i in range(0, 3):
-        checkBlockUnique(i)
+    checkBlockUnique()
     if '' not in sudokuPuzzle: #This part checks to see if the puzzle is complete
         break
 
-    for i in range(0, 81, 9): #Progress report
-        printSudoku(i)
+    printSudoku() #Progress report
         
     input()
 
@@ -458,5 +459,4 @@ while True: #Main loop starts here
         break
 
 print('Success!!!!!!')
-for z in range(0, 81, 9):
-    printSudoku(z)
+printSudoku()
